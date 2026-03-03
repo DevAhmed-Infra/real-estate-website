@@ -21,7 +21,6 @@ describe("Notification Service", () => {
         populate: jest.fn().mockResolvedValue([]),
       });
 
-      // Simplified test - actual implementation uses ApiFeatures
     });
 
     it("should throw error if user not authenticated", async () => {
@@ -230,7 +229,6 @@ describe("Notification Service", () => {
         query: Promise.resolve(mockNotifications),
       });
 
-      // Simplified test - actual implementation uses ApiFeatures
     });
   });
 

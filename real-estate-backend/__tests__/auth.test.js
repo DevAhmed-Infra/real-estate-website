@@ -5,7 +5,6 @@ const { sendEmail } = require("../src/utils/email");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-// Mock dependencies
 jest.mock("../src/models/userModel");
 jest.mock("../src/utils/email");
 jest.mock("jsonwebtoken");
@@ -384,7 +383,6 @@ describe("Authentication Service", () => {
           { expiresIn: "15m" },
         );
 
-      // For private functions, test through public interface
       expect(jwt.sign).toBeDefined();
     });
   });

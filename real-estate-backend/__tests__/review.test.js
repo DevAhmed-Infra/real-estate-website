@@ -23,7 +23,6 @@ describe("Review Service", () => {
         populate: jest.fn().mockResolvedValue([]),
       });
 
-      // Simplified test - actual implementation uses ApiFeatures
     });
 
     it("should throw error if user not authenticated", async () => {
@@ -106,7 +105,7 @@ describe("Review Service", () => {
       const result = await reviewService.createReview(reviewData, userId);
 
       expect(result.user).toBe(userId);
-      expect(Property.findByIdAndUpdate).toHaveBeenCalled(); // Ratings updated
+      expect(Property.findByIdAndUpdate).toHaveBeenCalled(); 
     });
 
     it("should throw error if property owner reviews own property", async () => {
@@ -199,7 +198,7 @@ describe("Review Service", () => {
       );
 
       expect(result.rating).toBe(5);
-      expect(Property.findByIdAndUpdate).toHaveBeenCalled(); // Ratings updated
+      expect(Property.findByIdAndUpdate).toHaveBeenCalled(); 
     });
 
     it("should throw error if not author", async () => {
@@ -251,7 +250,7 @@ describe("Review Service", () => {
           isDeleted: true,
         }),
       );
-      expect(Property.findByIdAndUpdate).toHaveBeenCalled(); // Ratings updated
+      expect(Property.findByIdAndUpdate).toHaveBeenCalled(); 
     });
 
     it("should throw error if not author", async () => {

@@ -23,7 +23,6 @@ describe("Favorite Service", () => {
         populate: jest.fn().mockResolvedValue([]),
       });
 
-      // Simplified test - actual implementation uses ApiFeatures
     });
 
     it("should throw error if user not authenticated", async () => {

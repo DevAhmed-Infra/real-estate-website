@@ -6,7 +6,6 @@ describe("Health Check Endpoint", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // Create a real test app with health check endpoint
     app = express();
 
     app.get("/health", (req, res) => {
@@ -34,7 +33,6 @@ describe("Health Check Endpoint", () => {
   it("should return correct timestamp format", async () => {
     const response = await request(app).get("/health");
 
-    // Check that timestamp is valid ISO format
     expect(() => new Date(response.body.timestamp)).not.toThrow();
     expect(response.body.timestamp).toBeTruthy();
   });
@@ -55,7 +53,6 @@ describe("Health Check Endpoint", () => {
   it("should have proper JSON response structure", async () => {
     const response = await request(app).get("/health");
 
-    // Verify JSON structure
     expect(response.headers["content-type"]).toContain("application/json");
     expect(response.body).toBeInstanceOf(Object);
     expect(Object.keys(response.body)).toContain("status");
@@ -77,8 +74,7 @@ describe("Health Check Endpoint", () => {
     const testApp = express();
 
     testApp.get("/health", (req, res) => {
-      // Simulate checking server health
-      const isHealthy = true; // In real scenario, check database
+      const isHealthy = true; 
 
       res.status(isHealthy ? 200 : 503).json({
         status: isHealthy ? 200 : 503,

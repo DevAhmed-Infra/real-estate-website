@@ -23,7 +23,6 @@ describe("Booking Service", () => {
         populate: jest.fn().mockResolvedValue([]),
       });
 
-      // Simplified test - actual implementation uses ApiFeatures
     });
 
     it("should throw error if user is not authenticated", async () => {
@@ -102,7 +101,7 @@ describe("Booking Service", () => {
 
     it("should throw error for past date", async () => {
       const userId = "buyer123";
-      const pastDate = new Date(Date.now() - 1000); // Past
+      const pastDate = new Date(Date.now() - 1000); 
       const bookingData = {
         property: "prop123",
         scheduledDate: pastDate,

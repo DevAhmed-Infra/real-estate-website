@@ -26,8 +26,7 @@ describe("Property Service", () => {
 
       Property.find = jest.fn().mockReturnValue(mockQueryChain);
 
-      // The actual implementation uses ApiFeatures which needs mocking
-      // This is a simplified test
+
     });
   });
 

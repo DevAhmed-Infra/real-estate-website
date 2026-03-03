@@ -28,7 +28,6 @@ describe("Analytics Service", () => {
         populate: jest.fn().mockResolvedValue(mockAnalytics),
       });
 
-      // Simplified test - actual implementation uses ApiFeatures
     });
   });
 
@@ -248,7 +247,6 @@ describe("Analytics Service", () => {
         populate: jest.fn().mockResolvedValue(mockAnalytics),
       });
 
-      // Simplified test - actual implementation uses ApiFeatures
     });
   });
 
@@ -267,7 +265,6 @@ describe("Analytics Service", () => {
         populate: jest.fn().mockResolvedValue(mockAnalytics),
       });
 
-      // Simplified test - actual implementation uses ApiFeatures
     });
   });
 
@@ -315,12 +312,12 @@ describe("Analytics Service", () => {
       User.countDocuments = jest.fn().mockResolvedValue(200);
       Analytics.countDocuments = jest
         .fn()
-        .mockResolvedValueOnce(1000) // total views
-        .mockResolvedValueOnce(300) // total favorites
-        .mockResolvedValueOnce(150) // total offers
-        .mockResolvedValueOnce(75) // total bookings
-        .mockResolvedValueOnce(500) // recent views
-        .mockResolvedValueOnce(100); // recent favorites
+        .mockResolvedValueOnce(1000) 
+        .mockResolvedValueOnce(300) 
+        .mockResolvedValueOnce(150) 
+        .mockResolvedValueOnce(75) 
+        .mockResolvedValueOnce(500) 
+        .mockResolvedValueOnce(100); 
 
       Analytics.aggregate = jest
         .fn()

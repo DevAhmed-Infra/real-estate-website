@@ -88,7 +88,7 @@ describe("Offer Service", () => {
 
       const mockProperty = {
         _id: "prop123",
-        owner: "seller123", // Different from userId
+        owner: "seller123", 
         price: 250000,
       };
 
@@ -126,7 +126,7 @@ describe("Offer Service", () => {
 
       const mockProperty = {
         _id: "prop123",
-        owner: userId, // Same as userId
+        owner: userId, 
         price: 250000,
       };
 
@@ -288,7 +288,7 @@ describe("Offer Service", () => {
       const result = await offerService.acceptOffer(offerId, propertyOwnerId);
 
       expect(result.status).toBe("accepted");
-      expect(Offer.updateMany).toHaveBeenCalled(); // Other offers rejected
+      expect(Offer.updateMany).toHaveBeenCalled(); 
     });
 
     it("should throw error if not property owner", async () => {

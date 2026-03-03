@@ -364,8 +364,8 @@ describe("User Service", () => {
       const userId = "userId123";
       const updateData = {
         name: "Jane",
-        password: "hacked", // Should be filtered out
-        email: "hacked@example.com", // Should be filtered out
+        password: "hacked", 
+        email: "hacked@example.com", 
       };
 
       const mockUpdatedUser = {
