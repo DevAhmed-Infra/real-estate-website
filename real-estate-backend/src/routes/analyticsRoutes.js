@@ -11,7 +11,6 @@ const {
 
 const router = express.Router();
 
-// Public tracking endpoint - must be before protect middleware
 router.post(
   "/track",
   validate(analyticsSchema),

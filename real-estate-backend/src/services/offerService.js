@@ -4,8 +4,6 @@ const AppError = require("../utils/appError");
 const ApiFeatures = require("../utils/apiFeatures");
 
 function buildOfferScopeQuery(user) {
-  // SECURITY: Never rely on client-provided filters for ownership scoping.
-  // We scope server-side first, then allow additional filtering as an AND condition.
   if (!user || !user.id || !user.role) {
     throw new AppError("Unauthorized", 401);
   }
@@ -18,7 +16,6 @@ function buildOfferScopeQuery(user) {
     return Offer.find({ buyer: user.id });
   }
 
-  // Agent can see offers related to properties they manage or own.
   if (user.role === "agent") {
     return Offer.find().populate({
       path: "property",
@@ -26,7 +23,6 @@ function buildOfferScopeQuery(user) {
     });
   }
 
-  // Default: lock down.
   return Offer.find({ _id: null });
 }
 
@@ -39,15 +35,12 @@ async function getOffers(query, user) {
     .limitFields()
     .paginate();
 
-  // When populating property for agent scoping, include owner/agent to enable authorization filtering.
   let offers = await features.query.populate([
     { path: "property", select: "title owner agent" },
     { path: "buyer", select: "name email" },
   ]);
 
   if (user.role === "agent") {
-    // SECURITY: Filter offers in-memory after the property ownership context has been loaded.
-    // This keeps the change localized without restructuring the data model.
     offers = offers.filter((o) => {
       const p = o.property;
       if (!p) return false;
@@ -61,7 +54,6 @@ async function getOffers(query, user) {
 }
 
 async function getOfferById(id, user) {
-  // SECURITY: Scoping is enforced here as well to prevent IDOR.
   const offer = await Offer.findById(id).populate([
     { path: "buyer", select: "name email" },
     { path: "property", select: "title owner agent" },

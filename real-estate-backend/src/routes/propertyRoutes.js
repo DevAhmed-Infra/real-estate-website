@@ -45,7 +45,6 @@ router.delete(
   propertyController.deleteProperty,
 );
 
-// Property image management routes
 router.post(
   "/:id/images",
   protect,

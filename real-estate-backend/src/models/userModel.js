@@ -100,7 +100,6 @@ userSchema.pre(/^find/, function () {
 });
 
 userSchema.pre("save", async function () {
-  // Only hash password if it has been modified
   if (!this.isModified("password")) return;
 
   const salt = await bcrypt.genSalt(12);

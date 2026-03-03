@@ -30,7 +30,6 @@ router.post(
   authController.resetPassword,
 );
 
-// Email verification - supports both query param and path param for flexibility
 router.get("/verify-email", authController.verifyEmail);
 router.get("/verify-email/:token", authController.verifyEmail);
 

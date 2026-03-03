@@ -4,24 +4,17 @@ const multer = require("multer");
 const sharp = require("sharp");
 const AppError = require("./appError");
 
-/**
- * Centralized Photo Upload Utility
- * Handles all image operations for users and properties
- * Production-ready with optimization and security
- */
 
-// Upload directories
+
 const uploadDir = path.join(__dirname, "..", "dev-data", "uploads");
 const tempDir = path.join(__dirname, "..", "dev-data", "temp");
 
-// Ensure directories exist
 [uploadDir, tempDir].forEach((dir) => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
 });
 
-// Multer storage configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, tempDir);
@@ -33,7 +26,6 @@ const storage = multer.diskStorage({
   },
 });
 
-// File filter for security - only allow specific image types
 const fileFilter = (req, file, cb) => {
   const allowedMimes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
@@ -44,9 +36,7 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-/**
- * Multer configurations for different use cases
- */
+
 const uploadProfilePhoto = multer({
   storage,
   fileFilter,
@@ -59,17 +49,13 @@ const uploadPropertyImages = multer({
   limits: { fileSize: 10 * 1024 * 1024, files: 10 }, // 10MB per image, max 10 files
 }).array("images", 10);
 
-// Legacy upload for backward compatibility
 const upload = multer({
   storage,
   fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-/**
- * Process and optimize image
- * Removes EXIF data, resizes, and compresses for web
- */
+
 const processImage = async (filePath, options = {}) => {
   const { width = 1200, height = 800, quality = 85, format = "jpeg" } = options;
 
@@ -77,7 +63,6 @@ const processImage = async (filePath, options = {}) => {
     const image = sharp(filePath);
     const metadata = await image.metadata();
 
-    // Process image: resize, compress, remove EXIF
     const optimizedBuffer = await image
       .resize(width, height, {
         fit: "inside",
@@ -102,9 +87,7 @@ const processImage = async (filePath, options = {}) => {
   }
 };
 
-/**
- * Save processed image to storage directory
- */
+
 const saveImage = async (buffer, filename, subfolder = "") => {
   const targetDir = path.join(uploadDir, subfolder);
 
@@ -124,9 +107,7 @@ const saveImage = async (buffer, filename, subfolder = "") => {
   };
 };
 
-/**
- * Cleanup temporary files after processing
- */
+
 const cleanupTempFiles = async (files) => {
   if (!files) return;
 
@@ -145,9 +126,7 @@ const cleanupTempFiles = async (files) => {
   );
 };
 
-/**
- * Get default profile photo for users without uploaded photos
- */
+
 const getDefaultProfilePhoto = () => ({
   url: "uploads/default-profile.jpg",
   publicId: "default-profile",
@@ -158,28 +137,21 @@ const getDefaultProfilePhoto = () => ({
   uploadedAt: new Date(),
 });
 
-/**
- * Upload and process user profile photo
- * Creates optimized square image for profile
- */
+
 const uploadUserPhoto = async (userId, file) => {
   if (!file) throw new AppError("No file uploaded", 400);
 
   try {
-    // Process image for profile (square, optimized)
     const { buffer, metadata } = await processImage(file.path, {
       width: 400,
       height: 400,
       quality: 85,
     });
 
-    // Generate unique filename
     const filename = `profile-${userId}-${Date.now()}.jpg`;
 
-    // Save image
     const imageData = await saveImage(buffer, filename, "profiles");
 
-    // Return complete photo object with metadata
     return {
       ...imageData,
       width: metadata.width,
@@ -190,10 +162,7 @@ const uploadUserPhoto = async (userId, file) => {
   }
 };
 
-/**
- * Upload and process property images
- * Creates optimized images for property listings
- */
+
 const processPropertyImages = async (propertyId, files, captions = []) => {
   if (!files || files.length === 0)
     throw new AppError("No files uploaded", 400);
@@ -202,20 +171,16 @@ const processPropertyImages = async (propertyId, files, captions = []) => {
   try {
     const processedImages = await Promise.all(
       files.map(async (file, index) => {
-        // Process image for property (larger, high quality)
         const { buffer, metadata } = await processImage(file.path, {
           width: 1200,
           height: 800,
           quality: 85,
         });
 
-        // Generate unique filename
         const filename = `property-${propertyId}-${Date.now()}-${index}.jpg`;
 
-        // Save image
         const imageData = await saveImage(buffer, filename, "properties");
 
-        // Return complete image object
         return {
           ...imageData,
           width: metadata.width,
@@ -232,14 +197,11 @@ const processPropertyImages = async (propertyId, files, captions = []) => {
   }
 };
 
-/**
- * Delete image from storage
- */
+
 const deleteImage = async (publicId) => {
   if (!publicId || publicId === "default-profile") return;
 
   try {
-    // Extract path from publicId
     const filePath = path.join(uploadDir, publicId);
     await fs.promises.unlink(filePath);
   } catch (error) {
@@ -248,23 +210,19 @@ const deleteImage = async (publicId) => {
 };
 
 module.exports = {
-  // Multer configurations for routes
   uploadProfilePhoto,
   uploadPropertyImages,
-  upload, // Legacy support
+  upload, 
 
-  // Core processing functions
   uploadUserPhoto,
   processPropertyImages,
   deleteImage,
   getDefaultProfilePhoto,
 
-  // Utility functions
   processImage,
   saveImage,
   cleanupTempFiles,
 
-  // Constants
   uploadDir,
   tempDir,
 };

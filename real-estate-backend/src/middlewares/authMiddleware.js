@@ -35,7 +35,6 @@ const protect = asyncHandler(async (req, res, next) => {
       currentUser.passwordChangedAt.getTime() / 1000,
       10,
     );
-    // Only reject if token was issued BEFORE password change
     if (decoded.iat < changedTimestamp) {
       return next(
         new AppError(

@@ -5,7 +5,6 @@ function globalErrorHandler(err, req, res, next) {
   const error = { ...err };
   error.message = err.message || "Something went wrong";
 
-  // Determine statusCode/status in a way that also works for non-AppError errors
   let statusCode = err.statusCode || 500;
   let status = err.status || "error";
 
@@ -22,7 +21,6 @@ function globalErrorHandler(err, req, res, next) {
     error.message = messages.join(". ");
   }
 
-  // Joi validation errors (from validateAsync)
   if (err.isJoi) {
     statusCode = 400;
     status = "fail";
@@ -37,7 +35,6 @@ function globalErrorHandler(err, req, res, next) {
     error.message = "Duplicate field value entered";
   }
 
-  // Mongoose CastError (e.g., invalid ObjectId)
   if (err.name === "CastError") {
     statusCode = 400;
     status = "fail";
@@ -62,7 +59,6 @@ function globalErrorHandler(err, req, res, next) {
     message: error.message || "Internal server error",
   };
 
-  // SECURITY: only expose stack traces in explicit development.
   if (process.env.NODE_ENV === "development") {
     response.stack = err.stack;
   }
@@ -71,7 +67,6 @@ function globalErrorHandler(err, req, res, next) {
 }
 
 function notFoundHandler(req, res, next) {
-  // Ignore favicon.ico requests to prevent 404 noise
   if (req.originalUrl === "/favicon.ico") {
     return res.status(204).end();
   }

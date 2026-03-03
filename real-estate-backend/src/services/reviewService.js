@@ -11,7 +11,6 @@ async function getAgentPropertyIds(agentId) {
 }
 
 async function buildReviewScopeQuery(user) {
-  // SECURITY: enforce scoping server-side to prevent cross-user review leakage.
   if (!user || !user.id || !user.role) {
     throw new AppError("Unauthorized", 401);
   }
@@ -50,7 +49,6 @@ async function getReviews(query, user) {
 }
 
 async function getReviewById(id, user) {
-  // SECURITY: enforce scoping server-side to prevent IDOR.
   if (!user || !user.id || !user.role) {
     throw new AppError("Unauthorized", 401);
   }

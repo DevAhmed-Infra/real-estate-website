@@ -3,7 +3,6 @@ const AppError = require("../utils/appError");
 const ApiFeatures = require("../utils/apiFeatures");
 
 async function getNotifications(query, user) {
-  // SECURITY: enforce scoping server-side to prevent notification leakage.
   if (!user || !user.id || !user.role) {
     throw new AppError("Unauthorized", 401);
   }

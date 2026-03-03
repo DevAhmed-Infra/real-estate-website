@@ -85,10 +85,7 @@ const getPropertyStats = asyncHandler(async (req, res, next) => {
   });
 });
 
-/**
- * Upload multiple property images
- * Optimizes images and updates property document
- */
+
 const uploadPropertyImages = asyncHandler(async (req, res, next) => {
   if (!req.files || req.files.length === 0) {
     return res.status(400).json({
@@ -106,17 +103,14 @@ const uploadPropertyImages = asyncHandler(async (req, res, next) => {
     : [];
 
   try {
-    // Process images using centralized utility
     const processedImages = await processPropertyImages(
       req.params.id,
       req.files,
       captionsArray,
     );
 
-    // Get property and update with new images
     const property = await propertyService.getPropertyById(req.params.id);
 
-    // Check ownership
     if (property.owner.toString() !== req.user.id.toString()) {
       return res.status(403).json({
         success: false,
@@ -125,7 +119,6 @@ const uploadPropertyImages = asyncHandler(async (req, res, next) => {
       });
     }
 
-    // Check current image count
     const currentImageCount = property.images ? property.images.length : 0;
     const totalImages = currentImageCount + processedImages.length;
 
@@ -137,10 +130,8 @@ const uploadPropertyImages = asyncHandler(async (req, res, next) => {
       });
     }
 
-    // Add new images to property
     const updatedImages = [...(property.images || []), ...processedImages];
 
-    // Set first image as primary if no primary exists
     if (
       updatedImages.length > 0 &&
       !updatedImages.some((img) => img.isPrimary)
@@ -148,7 +139,6 @@ const uploadPropertyImages = asyncHandler(async (req, res, next) => {
       updatedImages[0].isPrimary = true;
     }
 
-    // Update property with new images
     const updatedProperty = await propertyService.updatePropertyImages(
       req.params.id,
       updatedImages,
@@ -166,9 +156,7 @@ const uploadPropertyImages = asyncHandler(async (req, res, next) => {
   }
 });
 
-/**
- * Delete a specific property image
- */
+
 const deletePropertyImage = asyncHandler(async (req, res, next) => {
   const { imageIndex } = req.params;
 
@@ -203,20 +191,16 @@ const deletePropertyImage = asyncHandler(async (req, res, next) => {
 
     const imageToDelete = property.images[index];
 
-    // Delete from storage
     if (imageToDelete.publicId) {
       await deleteImage(imageToDelete.publicId);
     }
 
-    // Remove from array
     property.images.splice(index, 1);
 
-    // If deleted image was primary, set first remaining image as primary
     if (imageToDelete.isPrimary && property.images.length > 0) {
       property.images[0].isPrimary = true;
     }
 
-    // Update property
     const updatedProperty = await propertyService.updatePropertyImages(
       req.params.id,
       property.images,
@@ -234,16 +218,13 @@ const deletePropertyImage = asyncHandler(async (req, res, next) => {
   }
 });
 
-/**
- * Set an image as the cover/primary image
- */
+
 const setCoverImage = asyncHandler(async (req, res, next) => {
   const { imageIndex } = req.params;
 
   try {
     const property = await propertyService.getPropertyById(req.params.id);
 
-    // Check ownership
     if (property.owner.toString() !== req.user.id.toString()) {
       return res.status(403).json({
         success: false,
@@ -269,12 +250,10 @@ const setCoverImage = asyncHandler(async (req, res, next) => {
       });
     }
 
-    // Reset all images to non-primary
     property.images.forEach((image, i) => {
       image.isPrimary = i === index;
     });
 
-    // Update property
     const updatedProperty = await propertyService.updatePropertyImages(
       req.params.id,
       property.images,

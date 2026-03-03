@@ -50,11 +50,10 @@ async function registerUser(data) {
     throw new AppError("Email already in use", 400);
   }
 
-  // Create user without manual hashing - let the model pre-save hook handle it
   const user = await User.create({
     name: data.name,
     email: data.email.toLowerCase(),
-    password: data.password, // Let pre-save hook handle hashing
+    password: data.password,
     role: data.role || "buyer",
     phone: data.phone,
   });
@@ -82,7 +81,6 @@ async function registerUser(data) {
   ); // 24 hours
   await user.save();
 
-  // Use centralized configuration for verification URL
   const verifyUrl = config.getVerificationUrl(verificationToken);
   await sendEmail({
     to: user.email,
@@ -117,8 +115,7 @@ async function loginUser(email, password) {
     throw new AppError("Invalid email or password", 401);
   }
 
-  // Enforce email verification only when explicitly enabled.
-  // This prevents environments without outbound email configured from becoming unusable.
+
   if (process.env.REQUIRE_EMAIL_VERIFICATION === "true" && !user.isVerified) {
     throw new AppError("Please verify your email before logging in", 403);
   }
@@ -165,7 +162,6 @@ async function refreshAccessToken(refreshToken) {
     throw new AppError("User no longer exists", 401);
   }
 
-  // Enforce email verification only when explicitly enabled.
   if (process.env.REQUIRE_EMAIL_VERIFICATION === "true" && !user.isVerified) {
     throw new AppError(
       "Please verify your email before refreshing your session",
@@ -259,8 +255,7 @@ async function resetPassword(rawToken, newPassword) {
     throw new AppError("Token is invalid or has expired", 400);
   }
 
-  // IMPORTANT: Do NOT hash here. The User model has a pre("save") hook that hashes
-  // any modified password. Hashing here would cause a double-hash and make login impossible.
+ 
   user.password = newPassword;
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
@@ -273,7 +268,6 @@ async function verifyEmail(token) {
     throw new AppError("Verification token is required", 400);
   }
 
-  // Hash the token to compare with stored hash
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
   const user = await User.findOne({
@@ -285,12 +279,10 @@ async function verifyEmail(token) {
     throw new AppError("Invalid or expired verification token", 400);
   }
 
-  // Check if already verified
   if (user.isVerified) {
     throw new AppError("Email is already verified", 400);
   }
 
-  // Mark as verified and clear token fields
   user.isVerified = true;
   user.emailVerificationTokenHash = undefined;
   user.emailVerificationTokenExpires = undefined;

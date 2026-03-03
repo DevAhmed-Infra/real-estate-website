@@ -102,7 +102,6 @@ app.get("/health", (req, res) => {
   });
 });
 
-// Mount routes using centralized configuration
 app.use(`${config.apiBasePath}/auth`, authRoutes);
 app.use(`${config.apiBasePath}/users`, userRoutes);
 app.use(`${config.apiBasePath}/properties`, propertyRoutes);

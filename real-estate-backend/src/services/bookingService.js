@@ -11,7 +11,6 @@ async function getAgentPropertyIds(agentId) {
 }
 
 async function buildBookingScopeQuery(user) {
-  // SECURITY: enforce scoping server-side to prevent IDOR / cross-tenant listing.
   if (!user || !user.id || !user.role) {
     throw new AppError("Unauthorized", 401);
   }
@@ -50,7 +49,6 @@ async function getBookings(query, user) {
 }
 
 async function getBookingById(id, user) {
-  // SECURITY: enforce scoping server-side to prevent IDOR.
   if (!user || !user.id || !user.role) {
     throw new AppError("Unauthorized", 401);
   }

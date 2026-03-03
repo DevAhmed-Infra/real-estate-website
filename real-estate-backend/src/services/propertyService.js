@@ -81,7 +81,6 @@ async function deleteProperty(id, userId) {
 async function getPropertyStats() {
   const stats = await Property.aggregate([
     {
-      // Ensure soft-deleted properties are excluded from aggregations.
       $match: { isDeleted: false },
     },
     {
@@ -102,10 +101,7 @@ async function incrementViews(id) {
   await Property.findByIdAndUpdate(id, { $inc: { viewsCount: 1 } });
 }
 
-/**
- * Update property images array
- * Used by photo upload controllers
- */
+
 async function updatePropertyImages(id, images) {
   const updatedProperty = await Property.findByIdAndUpdate(
     id,

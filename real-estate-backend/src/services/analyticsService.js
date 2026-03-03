@@ -81,11 +81,9 @@ async function trackEvent(
     metadata,
   };
 
-  // Only include location if coordinates are provided
   if (metadata.location && metadata.location.coordinates) {
     analyticsData.metadata.location = metadata.location;
   } else {
-    // Remove location from metadata if coordinates are missing
     delete analyticsData.metadata.location;
   }
 

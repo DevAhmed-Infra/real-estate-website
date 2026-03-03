@@ -18,11 +18,9 @@ const getMe = asyncHandler(async (req, res) => {
 });
 
 const updateMe = asyncHandler(async (req, res) => {
-  // Handle profile photo upload separately
   if (req.file) {
     const profilePhoto = await uploadUserPhoto(req.user.id, req.file);
 
-    // Update user with new profile photo
     const updated = await userService.updateMe(req.user.id, { profilePhoto });
 
     return res.status(200).json({
@@ -34,7 +32,6 @@ const updateMe = asyncHandler(async (req, res) => {
     });
   }
 
-  // Handle regular profile update
   const updated = await userService.updateMe(req.user.id, req.body);
   res.status(200).json({
     success: true,
@@ -45,10 +42,7 @@ const updateMe = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Upload profile photo
- * Optimizes image and updates user profile
- */
+
 const uploadProfilePhoto = asyncHandler(async (req, res) => {
   if (!req.file) {
     return res.status(400).json({
@@ -60,7 +54,6 @@ const uploadProfilePhoto = asyncHandler(async (req, res) => {
 
   const profilePhoto = await uploadUserPhoto(req.user.id, req.file);
 
-  // Update user with new profile photo
   const updatedUser = await userService.updateMe(req.user.id, { profilePhoto });
 
   res.status(200).json({
@@ -72,18 +65,14 @@ const uploadProfilePhoto = asyncHandler(async (req, res) => {
   });
 });
 
-/**
- * Delete profile photo and set to default
- */
+
 const deleteProfilePhoto = asyncHandler(async (req, res) => {
   const user = await userService.getMe(req.user.id);
 
-  // Delete existing photo from storage if it's not the default
   if (user.profilePhoto && user.profilePhoto.publicId !== "default-profile") {
     await deleteImage(user.profilePhoto.publicId);
   }
 
-  // Set to default profile photo
   const defaultPhoto = getDefaultProfilePhoto();
   const updatedUser = await userService.updateMe(req.user.id, {
     profilePhoto: defaultPhoto,

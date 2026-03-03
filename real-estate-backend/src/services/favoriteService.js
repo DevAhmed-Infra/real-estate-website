@@ -11,7 +11,6 @@ async function getAgentPropertyIds(agentId) {
 }
 
 async function buildFavoriteScopeQuery(user) {
-  // SECURITY: enforce scoping server-side to prevent favorites leakage.
   if (!user || !user.id || !user.role) {
     throw new AppError("Unauthorized", 401);
   }
@@ -50,7 +49,6 @@ async function getFavorites(query, user) {
 }
 
 async function getFavoriteById(id, user) {
-  // SECURITY: enforce scoping server-side to prevent IDOR.
   if (!user || !user.id || !user.role) {
     throw new AppError("Unauthorized", 401);
   }

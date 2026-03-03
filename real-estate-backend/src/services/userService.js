@@ -50,7 +50,6 @@ async function updateMe(userId, payload, file = null) {
     }
   });
 
-  // If a profile photo file was uploaded, process and store it
   if (file) {
     updateData.photo = {
       url: `/uploads/${file.filename}`,
@@ -113,10 +112,9 @@ async function changeMyPassword(userId, currentPassword, newPassword) {
     throw new AppError("Current password is incorrect", 400);
   }
 
-  // Update password and invalidate all refresh tokens
-  user.password = newPassword; // Let pre-save hook handle hashing
+  user.password = newPassword; 
   user.passwordChangedAt = new Date();
-  user.refreshTokens = []; // Invalidate all existing refresh tokens
+  user.refreshTokens = [];
   await user.save();
 }
 
@@ -166,7 +164,7 @@ async function createUser(userData) {
     email: userData.email.toLowerCase(),
     role: userData.role || "buyer",
     phone: userData.phone,
-    password: userData.password, // Will be hashed by pre-save hook
+    password: userData.password, 
   });
 
   return user;
